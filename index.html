@@ -1,1 +1,128 @@
-<h1>Did I do this right?</h1>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Fat Arrow Dev Space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <style>
+      html, body { height: 100%; margin: 0; }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .wrapper {
+        width: 80%;
+        margin: 0 auto;
+      }
+      .logo {
+        font: 0/0 a;
+      }
+      .logo img {
+        width: 100%;
+      }
+      #countdown {
+        font-size: 14px;
+        font-family: monospace;
+        line-height: 1.6;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1 class="logo">
+        Fat Arrow Dev Space
+        <img src="fat-arrow-logo.svg">
+      </h1>
+      <div id="countdown">
+        <span>Going live in </span>
+        <span id="days" class="count"></span>
+        <span id="hours" class="count"></span>
+        <span id="minutes" class="count"></span>
+        <span id="seconds" class="count"></span>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        var countdownEls = (function() {
+          var els = {
+            days: document.getElementById('days'),
+            hours: document.getElementById('hours'),
+            minutes: document.getElementById('minutes'),
+            seconds: document.getElementById('seconds')
+          }
+
+          var k, el
+          for (k in els) {
+            el = els[k]
+            el.countdownCurrentValue = parseInt(el.getAttribute('data-initial-value'), 10)
+          }
+
+          return els
+        }())
+
+        function now() {
+          return (new Date()).getTime()
+        }
+
+        function diffDates(start, end) {
+          var secondsLeft = Math.abs(start - end) / 1000;
+          return {
+            days: Math.floor(secondsLeft / 86400),
+            hours: Math.floor((secondsLeft / 3600) % 24),
+            minutes: Math.floor((secondsLeft / 60) % 60),
+            seconds: Math.floor(secondsLeft % 60)
+          }
+        }
+
+        function inflect(str, num) {
+          return num === 1 ? str.substr(0, str.length - 1) : str;
+        }
+
+        function render(els, counts, predicate) {
+          var k, el, count
+          for (k in els) {
+            el = els[k]
+            count = counts[k]
+            if (predicate(el, count)) {
+              el.innerHTML = count + ' ' + inflect(k, count)
+            }
+          }
+        }
+
+        function shouldRender(el, count) {
+          if (el.countdownCurrentValue === count) return false
+          el.countdownCurrentValue = count
+          return true
+        }
+
+        function tick() {
+          render(
+            countdownEls,
+            diffDates(now(), launchDate),
+            shouldRender
+          )
+          setTimeout(tick, 1000)
+        }
+
+        var launchDate = new Date('September 14, 2015 14:00:00').getTime()
+        document.getElementById('countdown').style.display = 'block'
+        tick()
+      }())
+    </script>
+
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+          function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+          e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+          e.src='https://www.google-analytics.com/analytics.js';
+          r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-67227890-1','auto');ga('send','pageview');
+    </script>
+  </body>
+</html>
